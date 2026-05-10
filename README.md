@@ -1,8 +1,6 @@
-# 📄 Document Q&A Assistant
+# 🤖 AI-Powered Document Q&A System using RAG
 
-A RAG-powered (Retrieval-Augmented Generation) web app that lets you upload documents and ask questions about their content in natural language.
-
-Built with **Streamlit**, **Groq LLM**, **HuggingFace Embeddings**, and **FAISS**.
+A Retrieval-Augmented Generation (RAG) web application that lets you upload documents and ask questions about their content in natural language — powered by **Groq LLM**, **HuggingFace Embeddings**, and **FAISS**.
 
 ---
 
@@ -19,18 +17,21 @@ Built with **Streamlit**, **Groq LLM**, **HuggingFace Embeddings**, and **FAISS*
 ## 🗂️ Project Structure
 
 ```
-doc-qa-app/
+AI-Powered Document Q&A System using RAG/
 ├── src/
+│   ├── __init__.py
 │   ├── config.py            # All settings and constants
 │   ├── document_loader.py   # Text extraction (PDF, DOCX, TXT)
 │   └── rag_pipeline.py      # Core RAG logic
 ├── tests/
+│   ├── __init__.py
 │   ├── test_document_loader.py
 │   └── test_rag_pipeline.py
 ├── docs/
 │   └── architecture.md      # System design overview
 ├── app.py                   # Streamlit UI entry point
 ├── .env.example             # Template for environment variables
+├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
@@ -41,8 +42,13 @@ doc-qa-app/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/doc-qa-app.git
-cd doc-qa-app
+git clone https://github.com/your-username/ai-powered-doc-qa-rag.git
+cd "AI-Powered Document Q&A System using RAG"
+```
+
+Or navigate manually:
+```
+Desktop → Projects → AI-Powered Document Q&A System using RAG
 ```
 
 ### 2. Create and activate a virtual environment
@@ -63,8 +69,13 @@ pip install -r requirements.txt
 
 ### 4. Set up your environment variables
 ```bash
+# Windows
+copy .env.example .env
+
+# Mac/Linux
 cp .env.example .env
 ```
+
 Then open `.env` and add your Groq API key:
 ```
 GROQ_API_KEY=your_groq_api_key_here
@@ -75,6 +86,8 @@ Get your free API key at: https://console.groq.com/keys
 ```bash
 streamlit run app.py
 ```
+
+The app will open automatically at **http://localhost:8501**
 
 ---
 
@@ -88,12 +101,12 @@ pytest tests/
 
 ## ⚙️ Configuration
 
-All settings are in `src/config.py`:
+All settings are centralized in `src/config.py`:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `MODEL_NAME` | `llama-3.3-70b-versatile` | Groq LLM model |
-| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | HuggingFace embeddings |
+| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | HuggingFace sentence transformer |
 | `CHUNK_SIZE` | `600` | Characters per text chunk |
 | `CHUNK_OVERLAP` | `80` | Overlap between chunks |
 | `TOP_K` | `4` | Retrieved chunks per query |
@@ -103,18 +116,60 @@ All settings are in `src/config.py`:
 
 ## 📖 How It Works
 
-1. **Upload** a document → text is extracted
-2. **Text is chunked** into overlapping segments
-3. **Chunks are embedded** using HuggingFace and stored in FAISS
-4. **User asks a question** → top-K relevant chunks are retrieved
-5. **Groq LLM** generates an answer based only on retrieved context
+```
+User uploads document
+        │
+        ▼
+Extract raw text (PDF / DOCX / TXT)
+        │
+        ▼
+Split into overlapping chunks
+        │
+        ▼
+Embed chunks → Store in FAISS vector store
+        │
+        ▼
+User asks a question
+        │
+        ▼
+Retrieve top-K relevant chunks
+        │
+        ▼
+Groq LLM generates answer from context
+        │
+        ▼
+Display answer in chat UI
+```
 
-See [docs/architecture.md](docs/architecture.md) for a detailed flow diagram.
+See [docs/architecture.md](docs/architecture.md) for the full system design.
 
 ---
 
 ## 📝 Notes
 
 - The app answers **only from the uploaded document** — it won't hallucinate outside information
-- Transformers startup warnings in the console are harmless; suppress them by adding `TRANSFORMERS_VERBOSITY=error` to your `.env`
-- FAISS vector store is **in-memory** — re-upload the document after restarting the app
+- FAISS vector store is **in-memory** — re-upload your document after restarting the app
+- Transformer startup warnings in the console are harmless. To suppress them, add this to your `.env`:
+  ```
+  TRANSFORMERS_VERBOSITY=error
+  ```
+
+---
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| UI | Streamlit |
+| LLM | Groq (llama-3.3-70b-versatile) |
+| Embeddings | HuggingFace (all-MiniLM-L6-v2) |
+| Vector Store | FAISS (in-memory) |
+| Orchestration | LangChain |
+| PDF Parsing | pdfplumber |
+| DOCX Parsing | docx2txt |
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
