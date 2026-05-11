@@ -6,12 +6,27 @@ All constants and environment variables are managed here.
 """
 
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env for local development
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(dotenv_path=BASE_DIR / ".env")
 
-# --- API Keys ---
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# --- Read GROQ_API_KEY from env or Streamlit secrets ---
+def _get_groq_api_key() -> str | None:
+    # 1. Try environment variable first (local .env or system env)
+    key = os.getenv("GROQ_API_KEY")
+    if key:
+        return key
+    # 2. Fallback to Streamlit Cloud secrets
+    try:
+        import streamlit as st
+        return st.secrets.get("GROQ_API_KEY")
+    except Exception:
+        return None
+
+GROQ_API_KEY = _get_groq_api_key()
 
 # --- LLM Settings ---
 MODEL_NAME = "llama-3.3-70b-versatile"
