@@ -1,4 +1,4 @@
-# 🤖 Document Q&A System
+# Document Q&A System
 
 A Retrieval-Augmented Generation (RAG) app that lets you upload a PDF, DOCX, or TXT file and ask questions about it in plain language. Answers are generated **only** from the document's own content using Groq's `llama-3.3-70b-versatile`, HuggingFace sentence embeddings, and an in-memory FAISS vector store.
 
