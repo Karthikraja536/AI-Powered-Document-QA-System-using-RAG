@@ -6,6 +6,7 @@ API key loaded from .env file
 """
 
 import os
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -50,10 +51,11 @@ class RAGPipeline:
         )
 
         self.llm = ChatGroq(
-            model_name="llama-3.3-70b-versatile",
+            model_name="openai/gpt-oss-120b",
             temperature=0,
-            max_tokens=500,
-            groq_api_key=groq_api_key
+            max_tokens=800,
+            groq_api_key=groq_api_key,
+            reasoning_effort="low"
         )
 
         self.prompt = PromptTemplate(
@@ -93,6 +95,8 @@ class RAGPipeline:
             return {"answer": "No document loaded. Please upload a file first.", "sources": []}
 
         answer = self.qa_chain.invoke(question)
+        answer = re.sub(r"<think>.*?</think>", "", answer, flags=re.DOTALL).strip()
+
         source_docs = self.retriever.invoke(question)
         sources = [doc.page_content for doc in source_docs]
         return {"answer": answer, "sources": sources}
