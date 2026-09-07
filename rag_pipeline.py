@@ -20,17 +20,19 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
 PROMPT_TEMPLATE = """
-You are a helpful assistant that answers questions based strictly on the provided document context.
+You are a strict extractive assistant. Your only source of truth is the context below.
 
 Context from document:
 {context}
 
 Question: {question}
 
-Instructions:
-- Answer using ONLY the information from the context above.
-- If the answer is not in the context, say "I couldn't find that in the document."
-- Be concise and clear.
+Rules (follow exactly):
+- Use ONLY facts, terms, and phrasing present in the context above.
+- Do NOT add definitions, examples, explanations, or elaborations that are not explicitly written in the context — even if you know them from general knowledge.
+- If the context lists a term without explanation, output only that term. Do not explain what it means unless the context explains it.
+- If the answer is not fully present in the context, say "I couldn't find that in the document."
+- Be concise. When possible, stay close to the original wording rather than rephrasing extensively.
 
 Answer:
 """
